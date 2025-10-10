@@ -1,4 +1,9 @@
-class Student:
- print("Hi")
+class Car:
+    def __init__(self, brand, color):
+        self.brand = brand
+        self.color = color
+        print("Створено новий об’єкт машини!")
+        print(self.brand, self.color)
 
- first_student = Student()
+
+car1 = Car("BMW", "black")
