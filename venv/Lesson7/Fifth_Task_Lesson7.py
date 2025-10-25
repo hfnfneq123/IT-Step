@@ -6,7 +6,6 @@ def process_list(input_list):
         print(e)
 
 
-# --- Тести ---
 process_list([1, 2, 3])
 process_list([5, 8])
 process_list(["a", "b", "c", "d"])
