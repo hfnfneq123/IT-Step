@@ -1,32 +1,40 @@
-class Human:
-    def __init__(self, name):
-        self.name = name
+import cv2
+from PIL import Image
 
+# Шлях до зображень
+image_path = 'Sobaka.png'
+cascade_path = 'cascade.xml'
+hat_path = 'Hat.png'
 
-class Auto:
-    def __init__(self, brand):
-        self.brand = brand
-        self.passengers = []
+# Завантажуємо каскад
+dog_cascade = cv2.CascadeClassifier(cascade_path)
 
-    def add_passenger(self, *args):
-        for passenger in args:
-            self.passengers.append(passenger)
+# Завантажуємо зображення та переводимо у сірий формат
+image = cv2.imread(image_path)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    def print_passengers_names(self):
-        if self.passengers != []:
-            print(f"Names of {self.brand} passengers:")
-            for passenger in self.passengers:
-                print(passenger.name)
-        else:
-            print(f"There are no passengers in {self.brand}")
+# Розпізнаємо "голову собаки"
+faces = dog_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
 
+# Відкриваємо через PIL
+dog = Image.open(image_path).convert("RGBA")
+hat = Image.open(hat_path).convert("RGBA")
 
-alex = Human("Alex")
-anna = Human("Anna")
+# Додаємо капелюх
+for (x, y, w, h) in faces:
+    # Змінюємо розмір капелюха відповідно до ширини голови
+    resized_hat = hat.resize((w, int(h/2)))  # половина висоти обличчя
+    # Позиціонуємо трохи вище голови
+    hat_y = y - int(h/3)
+    dog.paste(resized_hat, (x, hat_y), resized_hat)
 
-car = Auto("Mersedes")
+# Зберігаємо результат
+dog.save("dog_new.png")
 
-car.add_passenger(alex, anna)
+# Відображаємо
+dog_new = cv2.imread("dog_new.png")
+cv2.imshow("Dog with Hat", dog_new)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
-car.print_passengers_names()
 
